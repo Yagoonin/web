@@ -1,0 +1,40 @@
+<div class="row my-5">
+    <div class="col">
+        <h1 class="text-center">도서검색</h1>
+        <div id="div_books"></div>
+    </div>
+</div>
+<!-- 반복문 -->
+<script type="x-handlebars-template" id="temp_books">
+    <table class="table">
+    {{#each documents}}
+        <tr>
+            <td><img src="{{thumbnail}}" size=10px></td>
+            <td>{{title}}</td>
+            <td>{{price}}</td>
+            <td>{{authors}}</td>
+        </tr>
+    {{/each}}
+    </table>
+</script>
+<script>
+    getBooks();
+    // 도서 검색 데이터 불러오기
+    function getBooks() {
+        // j query 명령어는 $로 시작
+        $.ajax({
+            type: "get",
+            url: "https://dapi.kakao.com/v3/search/book?target=title",
+            headers: {"Authorization": "KakaoAK 7216c3846bb4f9379d2e6bb587989df4"},
+            data: {query: "자바", page: 1, size: 5},
+            success: function(data) {
+                // console.log(data);
+                // id는 #, class는 .
+                let temp=Handlebars.compile($("#temp_books").html());
+                // template_books를 html로 컴파일해서 temp에 넣음
+                $("#div_books").html(temp(data));
+                // div_books id를 가진 div에 data를 전달하여 compile 한 temp_books를 넣음
+            }
+        })
+    }
+</script>
