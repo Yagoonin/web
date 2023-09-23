@@ -1,3 +1,8 @@
+<style>
+    #div_books img{
+        cursor:pointer
+    }
+</style>
 <div class="row my-5"> <!-- y margin은 최대 5 -->
     <div class="col">
         <div class="row mb-2 justify-content-end">
@@ -25,20 +30,41 @@
     <div class="col-6 col-md-4 col-lg-2 mb-2">
         <div class="card">
             <div class="card-body">
-                <img src="{{thumbnail}}" width="90%">
+                <img src="{{chkImage thumbnail}}" width="90%" index="{{@index}}">
                 <div class="ellipsis text-center">{{title}}</div>
             </div>
             <div class="card-footer">
-                {{price}}
+                {{fmtPrice price}}
             </div>
         </div>
     </div>
+    <%-include('books/modal.ejs')%>
     {{/each}}
+</script>
+<!-- Handlebars 함수 -->
+<script>
+    Handlebars.registerHelper("chkImage", function(image){
+        if(image) {
+            return image;
+        } else {
+            return "https://via.placeholder.com/120x170";
+        }
+    });
+
+    Handlebars.registerHelper("fmtPrice", function(price){
+        if(price) return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
+    })
 </script>
 <!-- $ : Jquery -->
 <script>
     let query = $(frm.query).val();
     let page = 1;
+
+    // 이미지를 클릭했을 때
+    $("#div_books").on("click", "img", function(){
+        let index = $(this).attr("index");
+        $("#modal" + index).modal("show");
+    })
     
     $(frm).on("submit", function(e){
         e.preventDefault(); // Default event의 발생을 막음

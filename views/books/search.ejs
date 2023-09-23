@@ -25,17 +25,38 @@
     <table class="table">
     {{#each documents}}
         <tr>
-            <td><img src="{{thumbnail}}" size=10px></td>
+            <td><img src="{{chkImage thumbnail}}" size=10px></td>
             <td>{{title}}</td>
-            <td>{{price}}</td>
+            <td>{{fmtPrice price}}</td>
             <td>{{authors}}</td>
+            <td><button class="btn btn-primary" index="{{@index}}">도서 정보</button></td>
         </tr>
+        <%-include('modal.ejs')%>
     {{/each}}
     </table>
+</script>
+<!-- Handlebars 함수 -->
+<script>
+    Handlebars.registerHelper("chkImage", function(image){
+        if(image) {
+            return image;
+        } else {
+            return "https://via.placeholder.com/120x170";
+        }
+    });
+    Handlebars.registerHelper("fmtPrice", function(price){
+        if(price) return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원';
+    })
 </script>
 <script>
     let query = $(frm.query).val();
     let page = 1;
+
+    // '도서 정보' 버튼을 클릭했을 때
+    $("#div_books").on("click", ".btn-primary", function(){
+        let index = $(this).attr("index");
+        $("#modal" + index).modal("show");
+    })
 
     // 검색창에서 검색 시
     $(frm).on("submit", function(e){
