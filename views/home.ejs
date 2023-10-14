@@ -103,6 +103,7 @@
         } else {
             // 장바구니에 상품정보 저장
             const book = JSON.parse($(this).attr("book"));
+            // 문자하고 변수 연결 시 백틱 사용
             const ref_book = `cart/${sessionStorage.getItem("uid")}/${book.isbn}`;
             // 장바구니에 있는지 확인
             const snapshot = await get(ref(db, ref_book));
