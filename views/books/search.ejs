@@ -88,7 +88,7 @@
             success: function(data) {
                 console.log(data);
                 // id는 #, class는 .
-                let temp=Handlebars.compile($("#temp_books").html());
+                let temp = Handlebars.compile($("#temp_books").html());
                 // template_books를 html로 컴파일해서 temp에 넣음
                 $("#div_books").html(temp(data));
                 // div_books id를 가진 div에 data를 전달하여 compile 한 temp_books를 넣음

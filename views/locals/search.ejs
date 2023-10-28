@@ -29,16 +29,48 @@
             <td>{{place_name}}</td>
             <td>{{address_name}}</td>
             <td>{{phone}}</td>
+            <td><button class="btn btn-primary btn-sm" local="{{toString @this}}">즐겨찾기</button></td>
         </tr>
         {{/each}}
     </table>
 </script>
 
 <script>
+    Handlebars.registerHelper("toString", function(local) {
+        return JSON.stringify(local);
+    })
+</script>
+
+<script type="module">
+    import { app } from "/javascripts/firebaseInit.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+    const db = getDatabase(app);
+
     let page = 1;
     let query = $(frm.query).val();
 
     getLocals();
+
+    // 즐겨찾기 버튼을 누른 경우
+    $("#div_locals").on("click", ".btn", async function(e) {
+        if(!sessionStorage.getItem("uid")) {
+            sessionStorage.setItem("target", "/locals");
+            location.href = "/users/login";
+            return;
+        }
+
+        const local = JSON.parse($(this).attr('local'));
+        console.log(local);
+        const ref_local = `favorite/${sessionStorage.getItem('uid')}/${local.id}`;
+        const snapshot = await get(ref(db, ref_local));
+        if(snapshot.val()) {
+            alert("이미 등록 된 장소입니다.");
+            return;
+        }
+
+        await set(ref(db, ref_local), local);
+        alert("등록 되었습니다.");
+    });
 
     // 검색 버튼을 클릭 or 엔터 시
     $(frm).on("submit", function(e){
@@ -46,18 +78,18 @@
         query = $(frm.query).val();
         page = 1;
         getLocals();
-    })
+    });
 
     // 다음 버튼을 클릭한 경우
     $("#next_btn").on("click", function(e){
         page++;
         getLocals();
-    })
+    });
     // 이전 버튼을 클릭한 경우
     $("#prev_btn").on("click", function(e){
         page--;
         getLocals();
-    })
+    });
 
     function getLocals() {
         $.ajax({
